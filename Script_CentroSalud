@@ -1,0 +1,198 @@
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Paciente`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Paciente` (
+  `idPaciente` INT NOT NULL,
+  `nombre` VARCHAR(45) NOT NULL,
+  `fecha_nac` DATE NOT NULL,
+  `Genero` INT NOT NULL,
+  `DIreccion` VARCHAR(45) NOT NULL,
+  `DPI` VARCHAR(13) NOT NULL,
+  `Telefono` VARCHAR(8) NOT NULL,
+  `Estado` INT NOT NULL,
+  `Correo` VARCHAR(45) NULL,
+  PRIMARY KEY (`idPaciente`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Doctor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Doctor` (
+  `idDoctor` INT NOT NULL,
+  `Nombre` VARCHAR(45) NOT NULL,
+  `LicenciaMedica` VARCHAR(45) NULL,
+  `Fecha_Nac` DATE NULL,
+  `Especialidad` VARCHAR(30) NULL,
+  PRIMARY KEY (`idDoctor`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Cita`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Cita` (
+  `idCita` INT NOT NULL,
+  `Fecha` DATE NOT NULL,
+  `Realizada` INT NOT NULL,
+  `Paciente` INT NOT NULL,
+  `Doctor` INT NOT NULL,
+  PRIMARY KEY (`idCita`),
+  INDEX `fk_Cita_Paciente1_idx` (`Paciente` ASC),
+  INDEX `fk_Cita_Doctor1_idx` (`Doctor` ASC),
+  CONSTRAINT `fk_Cita_Paciente1`
+    FOREIGN KEY (`Paciente`)
+    REFERENCES `mydb`.`Paciente` (`idPaciente`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Cita_Doctor1`
+    FOREIGN KEY (`Doctor`)
+    REFERENCES `mydb`.`Doctor` (`idDoctor`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Enfermedad`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Enfermedad` (
+  `idEnfermedad` INT NOT NULL,
+  `Nombre` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idEnfermedad`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Diagnostico`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Diagnostico` (
+  `idDiagnostico` INT NOT NULL,
+  `Descripcion` VARCHAR(45) NOT NULL,
+  `Cita` INT NOT NULL,
+  `Enfermedad_idEnfermedad` INT NOT NULL,
+  PRIMARY KEY (`idDiagnostico`),
+  INDEX `fk_Diagnostico_Cita1_idx` (`Cita` ASC),
+  INDEX `fk_Diagnostico_Enfermedad1_idx` (`Enfermedad_idEnfermedad` ASC),
+  CONSTRAINT `fk_Diagnostico_Cita1`
+    FOREIGN KEY (`Cita`)
+    REFERENCES `mydb`.`Cita` (`idCita`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Diagnostico_Enfermedad1`
+    FOREIGN KEY (`Enfermedad_idEnfermedad`)
+    REFERENCES `mydb`.`Enfermedad` (`idEnfermedad`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Receta`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Receta` (
+  `idReceta` INT NOT NULL,
+  `Cita` INT NOT NULL,
+  PRIMARY KEY (`idReceta`),
+  INDEX `fk_Receta_Cita1_idx` (`Cita` ASC),
+  CONSTRAINT `fk_Receta_Cita1`
+    FOREIGN KEY (`Cita`)
+    REFERENCES `mydb`.`Cita` (`idCita`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Medicamento`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Medicamento` (
+  `idMedicamento` INT NOT NULL,
+  `Nombre` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idMedicamento`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Centro_Salud`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Centro_Salud` (
+  `idCentro_Salud` INT NOT NULL,
+  `Nombre` VARCHAR(45) NOT NULL,
+  `Direccion` VARCHAR(45) NULL,
+  PRIMARY KEY (`idCentro_Salud`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Traslado_Paciente`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Traslado_Paciente` (
+  `idTraslado_Paciente` INT NOT NULL,
+  `Fecha` DATE NOT NULL,
+  `Destino` INT NOT NULL,
+  `Origen` INT NOT NULL,
+  `Paciente` INT NOT NULL,
+  PRIMARY KEY (`idTraslado_Paciente`),
+  INDEX `fk_Traslado_Paciente_Centro_Salud_idx` (`Destino` ASC),
+  INDEX `fk_Traslado_Paciente_Centro_Salud1_idx` (`Origen` ASC),
+  INDEX `fk_Traslado_Paciente_Paciente1_idx` (`Paciente` ASC),
+  CONSTRAINT `fk_Traslado_Paciente_Centro_Salud`
+    FOREIGN KEY (`Destino`)
+    REFERENCES `mydb`.`Centro_Salud` (`idCentro_Salud`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Traslado_Paciente_Centro_Salud1`
+    FOREIGN KEY (`Origen`)
+    REFERENCES `mydb`.`Centro_Salud` (`idCentro_Salud`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Traslado_Paciente_Paciente1`
+    FOREIGN KEY (`Paciente`)
+    REFERENCES `mydb`.`Paciente` (`idPaciente`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Detalle_Receta`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Detalle_Receta` (
+  `idDetalle_Receta` INT NOT NULL,
+  `Cantidad` INT NOT NULL,
+  `Receta` INT NOT NULL,
+  `Medicamento` INT NOT NULL,
+  PRIMARY KEY (`idDetalle_Receta`),
+  INDEX `fk_Detalle_Receta_Receta1_idx` (`Receta` ASC),
+  INDEX `fk_Detalle_Receta_Medicamento1_idx` (`Medicamento` ASC),
+  CONSTRAINT `fk_Detalle_Receta_Receta1`
+    FOREIGN KEY (`Receta`)
+    REFERENCES `mydb`.`Receta` (`idReceta`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Detalle_Receta_Medicamento1`
+    FOREIGN KEY (`Medicamento`)
+    REFERENCES `mydb`.`Medicamento` (`idMedicamento`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
