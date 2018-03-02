@@ -5,10 +5,10 @@
  */
 package ServiciosWeb;
 
-import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -20,22 +20,19 @@ import javax.sql.DataSource;
  *
  * @author cyno
  */
-@WebService(serviceName = "RegistroPaciente")
-public class RegistroPaciente {
+@WebService(serviceName = "RegistroDoctor")
+public class RegistroDoctor {
 
     /**
      * This is a sample web service operation
      */
-    @WebMethod(operationName = "registro_Paciente")
-    public String registro_Paciente(
-            @WebParam(name = "dpi")String dpi, 
-            @WebParam(name = "nombrePaciente") String nombresPaciente, 
+   @WebMethod(operationName = "registro_Doctor")
+    public String registro_Doctor(
+            @WebParam(name = "nombre") String nombre,
+            @WebParam(name = "licenciaMedica") String licenciaMedica,
             @WebParam(name = "fecha_nac") String fechaNacimiento,
-            @WebParam(name = "genero")int genero, 
-            @WebParam(name = "direccion")String direccion, 
-            @WebParam(name = "telefono")String telefono, 
-            @WebParam(name = "estado")int estado,
-            @WebParam(name = "correo")String correo) throws SQLException {
+            @WebParam(name = "especialidad")String especialidad) 
+            throws SQLException {
         
         String sql="";
         Connection conn = null;
@@ -48,26 +45,25 @@ public class RegistroPaciente {
            conn =  ds.getConnection();
             stmt = conn.createStatement();
             
-            String codigoPaciente = "";
-            ResultSet idPaciente = stmt.executeQuery("select max(idPaciente) idPaciente from Paciente");
+            String codigoDoctor = "";
+            ResultSet idDoc = stmt.executeQuery("select max(idDoctor) idDoctor from Doctor");
             
-            while ( idPaciente.next() ) {
-                String cod = idPaciente.getString("idPaciente");
-                codigoPaciente = cod;
+            while ( idDoc.next() ) {
+                String cod = idDoc.getString("idDoctor");
+                codigoDoctor = cod;
             }
             
-            int codPaciente = Integer.parseInt(codigoPaciente)+1;
+            int codDoctor = Integer.parseInt(codigoDoctor)+1;
             
-            sql = "insert into Paciente( idPaciente,nombre,fecha_nac,Genero,DIreccion,DPI,Telefono,Estado,Correo)"+
-                    " values ("+codPaciente+" , '"+nombresPaciente+"','"+fechaNacimiento+"',"+genero+",'"+direccion+"','"
-                    +dpi+"','"+telefono+"',"+estado+",'"+correo+"')";
+            sql = "insert into Doctor ( idDoctor,Nombre,LicenciaMedica,Fecha_Nac,Especialidad)"+
+                    " values ("+codDoctor+" , '"+nombre+"','"+licenciaMedica+"','"+fechaNacimiento+"','"+especialidad+"')";
             result = stmt.execute(sql);
             result=true;
             System.out.println(sql);
             
         } catch (NumberFormatException | SQLException | NamingException se) {
             //Handle errors for JDBC
-
+            return sql+" ERROR -> "+se.toString();
         }
         finally {
             //finally block used to close resources
