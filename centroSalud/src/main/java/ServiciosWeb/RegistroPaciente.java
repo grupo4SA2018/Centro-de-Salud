@@ -5,9 +5,18 @@
  */
 package ServiciosWeb;
 
+import java.sql.Statement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 /**
  *
@@ -19,8 +28,62 @@ public class RegistroPaciente {
     /**
      * This is a sample web service operation
      */
-    @WebMethod(operationName = "hello")
-    public String hello(@WebParam(name = "name") String txt) {
-        return "Hello " + txt + " !";
+    @WebMethod(operationName = "registro_Paciente")
+    public String registro_Paciente(
+            @WebParam(name = "dpi")String dpi, 
+            @WebParam(name = "nombresPaciente") String nombresPaciente, 
+            @WebParam(name = "fecha_nac") String fechaNacimiento,
+            @WebParam(name = "genero")int genero, 
+            @WebParam(name = "direccion")String direccion, 
+            @WebParam(name = "telefono")String telefono, 
+            @WebParam(name = "estado")int estado,
+            @WebParam(name = "correo")String correo) throws SQLException {
+        
+        String sql="";
+        Connection conn = null;
+        Statement stmt = null;
+        boolean result = false;
+        
+        try {
+           InitialContext ctx = new InitialContext();
+           DataSource ds = (DataSource)ctx.lookup("java:/CentroSaludDS");
+           conn =  ds.getConnection();
+            stmt = conn.createStatement();
+            
+            String codigoPaciente = "";
+            ResultSet idPaciente = stmt.executeQuery("select max(idPaciente) idPaciente from Paciente");
+            
+            while ( idPaciente.next() ) {
+                String cod = idPaciente.getString("idPaciente");
+                codigoPaciente = cod;
+            }
+            
+            int codPaciente = Integer.parseInt(codigoPaciente);
+            
+            sql = "insert into Paciente( idPaciente,nombre,fecha_nac,Genero,DIreccion,DPI,Telefono,Estado,Correo)"+
+                    " values ("+codPaciente+" , '"+nombresPaciente+"','"+fechaNacimiento+"',"+genero+",'"+direccion+"','"
+                    +dpi+"','"+telefono+"',"+estado+",'"+correo+"')";
+            result = stmt.execute(sql);
+            result=true;
+            System.out.println(sql);
+            
+        } catch (NumberFormatException | SQLException | NamingException se) {
+            //Handle errors for JDBC
+
+        }
+        finally {
+            //finally block used to close resources
+            if (stmt != null) {
+                conn.close();
+            } // do nothing
+            if (conn != null) {
+                conn.close();
+            } //end finally try
+        };
+        
+        
+        if(result)
+            return "{\"estado:exito\"}";
+        return "{\"estado:error\"}";
     }
 }
