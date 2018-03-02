@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import ServiciosWeb.ServiciosWebCentroSalud;
 
 /**
  *
@@ -19,9 +18,7 @@ import ServiciosWeb.ServiciosWebCentroSalud;
  */
 public class PruebaUnitaria {
     
-    ServiciosWebCentroSalud request;
-    public PruebaUnitaria() {
-    }
+  
     
     @BeforeClass
     public static void setUpClass() {
@@ -31,10 +28,7 @@ public class PruebaUnitaria {
     public static void tearDownClass() {
     }
     
-    @Before
-    public void setUp() {
-         request = new ServiciosWebCentroSalud();
-    }
+   
     
     @After
     public void tearDown() {
@@ -45,11 +39,5 @@ public class PruebaUnitaria {
     //
     // @Test
     // public void hello() {}
-    @Test
-    public void prueba_hello()
-    {
-        String p="world";
-        String r =  this.request.hello(p);
-        assertEquals("Hello world !",r);
-    }
+   
 }
