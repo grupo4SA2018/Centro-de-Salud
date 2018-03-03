@@ -45,18 +45,10 @@ public class Doctor {
            conn =  ds.getConnection();
             stmt = conn.createStatement();
             
-            String codigoDoctor = "";
-            ResultSet idDoc = stmt.executeQuery("select max(idDoctor) idDoctor from Doctor");
+           
             
-            while ( idDoc.next() ) {
-                String cod = idDoc.getString("idDoctor");
-                codigoDoctor = cod;
-            }
-            
-            int codDoctor = Integer.parseInt(codigoDoctor)+1;
-            
-            sql = "insert into Doctor ( idDoctor,Nombre,LicenciaMedica,Fecha_Nac,Especialidad)"+
-                    " values ("+codDoctor+" , '"+nombre+"','"+licenciaMedica+"','"+fechaNacimiento+"','"+especialidad+"')";
+            sql = "insert into Doctor (Nombre,LicenciaMedica,Fecha_Nac,Especialidad)"+
+                    " values ('"+nombre+"','"+licenciaMedica+"','"+fechaNacimiento+"','"+especialidad+"')";
             result = stmt.execute(sql);
             result=true;
             System.out.println(sql);

@@ -47,19 +47,10 @@ public class Paciente {
            DataSource ds = (DataSource)ctx.lookup("java:/CentroSaludDS");
            conn =  ds.getConnection();
             stmt = conn.createStatement();
+           
             
-            String codigoPaciente = "";
-            ResultSet idPaciente = stmt.executeQuery("select max(idPaciente) idPaciente from Paciente");
-            
-            while ( idPaciente.next() ) {
-                String cod = idPaciente.getString("idPaciente");
-                codigoPaciente = cod;
-            }
-            
-            int codPaciente = Integer.parseInt(codigoPaciente)+1;
-            
-            sql = "insert into Paciente( idPaciente,nombre,fecha_nac,Genero,DIreccion,DPI,Telefono,Estado,Correo)"+
-                    " values ("+codPaciente+" , '"+nombresPaciente+"','"+fechaNacimiento+"',"+genero+",'"+direccion+"','"
+            sql = "insert into Paciente(nombre,fecha_nac,Genero,DIreccion,DPI,Telefono,Estado,Correo)"+
+                    " values ('"+nombresPaciente+"','"+fechaNacimiento+"',"+genero+",'"+direccion+"','"
                     +dpi+"','"+telefono+"',"+estado+",'"+correo+"')";
             result = stmt.execute(sql);
             result=true;
