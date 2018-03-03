@@ -6,7 +6,6 @@
 package ServiciosWeb;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.jws.WebService;
@@ -20,15 +19,14 @@ import javax.sql.DataSource;
  *
  * @author cyno
  */
-@WebService(serviceName = "RegistroMedicamento")
-public class RegistroMedicamento {
+@WebService(serviceName = "Enfermedad")
+public class Enfermedad {
 
     /**
-     * Registro de medicamento
+     * This is a sample web service operation
      */
-    
-    @WebMethod(operationName = "registro_Medicamento")
-    public String registro_Medicamento(@WebParam(name = "nombre") String nombre) throws SQLException {
+   @WebMethod(operationName = "registro_Enfermedad")
+    public String registro_Enfermedad(@WebParam(name = "nombre") String nombre) throws SQLException {
         String sql="";
         Connection conn = null;
         Statement stmt = null;
@@ -40,7 +38,7 @@ public class RegistroMedicamento {
            conn =  ds.getConnection();
             stmt = conn.createStatement();
             
-            sql = "insert into Medicamento ( nombre)"+
+            sql = "insert into Enfermedad ( nombre)"+
                     " values ('"+nombre+"')";
             
             result = stmt.execute(sql);
