@@ -19,14 +19,14 @@ import javax.sql.DataSource;
  *
  * @author cyno
  */
-@WebService(serviceName = "TrasladoPaciente")
-public class TrasladoPaciente {
+@WebService(serviceName = "Diagnostico")
+public class Diagnostico {
 
     /**
-     * registro de un traslado de paciente
+     * Registro de un Diagnostico
      */
-     @WebMethod(operationName = "registro_TrasladoPaciente")
-    public String registro_TrasladoPaciente(@WebParam(name = "fecha") String fecha, @WebParam(name = "idDestino") int destino, @WebParam(name = "idOrigen") int origen, @WebParam(name = "idPaciente") int paciente) throws SQLException {
+    @WebMethod(operationName = "registro_Diagnostico")
+   public String registro_TrasladoPaciente(@WebParam(name = "descripcion") String descripcion, @WebParam(name = "idCita") int cita, @WebParam(name = "idEnfermedad") int enfermedad) throws SQLException {
         String sql="";
         Connection conn = null;
         Statement stmt = null;
@@ -38,8 +38,8 @@ public class TrasladoPaciente {
            conn =  ds.getConnection();
             stmt = conn.createStatement();
             
-            sql = "insert into Traslado_Paciente ( fecha,destino,origen,paciente)"+
-                    " values ('"+fecha+"',"+destino+","+origen+","+paciente+")";
+            sql = "insert into Diagnostico ( descripcion,cita,Enfermedad_idEnfermedad)"+
+                    " values ('"+descripcion+"',"+cita+","+enfermedad+")";
             
             result = stmt.execute(sql);
             result=true;
