@@ -24,7 +24,7 @@ import javax.sql.DataSource;
 public class Paciente {
 
     /**
-     * This is a sample web service operation
+     * Registro de un paciente
      */
     @WebMethod(operationName = "registro_Paciente")
     public String registro_Paciente(

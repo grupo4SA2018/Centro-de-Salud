@@ -23,7 +23,7 @@ import javax.sql.DataSource;
 public class CentroSalud {
 
     /**
-     * This is a sample web service operation
+     * Registro de un centro de salud
      */
      @WebMethod(operationName = "registro_CentroSalud")
     public String registro_Enfermedad(@WebParam(name = "nombre") String nombre, @WebParam(name = "direccion") String direccion) throws SQLException {

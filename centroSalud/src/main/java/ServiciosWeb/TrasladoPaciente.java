@@ -6,7 +6,6 @@
 package ServiciosWeb;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.jws.WebService;
@@ -20,20 +19,14 @@ import javax.sql.DataSource;
  *
  * @author cyno
  */
-@WebService(serviceName = "Doctor")
-public class Doctor {
+@WebService(serviceName = "TrasladoPaciente")
+public class TrasladoPaciente {
 
     /**
-     * Registro de un Doctor
+     * registro de un traslado de paciente
      */
-   @WebMethod(operationName = "registro_Doctor")
-    public String registro_Doctor(
-            @WebParam(name = "nombre") String nombre,
-            @WebParam(name = "licenciaMedica") String licenciaMedica,
-            @WebParam(name = "fecha_nac") String fechaNacimiento,
-            @WebParam(name = "especialidad")String especialidad) 
-            throws SQLException {
-        
+     @WebMethod(operationName = "registro_TrasladoPaciente")
+    public String registro_TrasladoPaciente(@WebParam(name = "fecha") String fecha, @WebParam(name = "destino") int destino, @WebParam(name = "origne") int origen, @WebParam(name = "paciente") int paciente) throws SQLException {
         String sql="";
         Connection conn = null;
         Statement stmt = null;
@@ -45,17 +38,16 @@ public class Doctor {
            conn =  ds.getConnection();
             stmt = conn.createStatement();
             
-           
+            sql = "insert into Traslado_Paciente ( fecha,destino,origen,paciente)"+
+                    " values ('"+fecha+"',"+destino+","+origen+","+paciente+")";
             
-            sql = "insert into Doctor (Nombre,LicenciaMedica,Fecha_Nac,Especialidad)"+
-                    " values ('"+nombre+"','"+licenciaMedica+"','"+fechaNacimiento+"','"+especialidad+"')";
             result = stmt.execute(sql);
             result=true;
             System.out.println(sql);
             
         } catch (NumberFormatException | SQLException | NamingException se) {
             //Handle errors for JDBC
-            return sql+" ERROR -> "+se.toString();
+            result = false;
         }
         finally {
             //finally block used to close resources
