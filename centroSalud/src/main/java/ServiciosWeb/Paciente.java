@@ -58,7 +58,7 @@ public class Paciente {
             
         } catch (NumberFormatException | SQLException | NamingException se) {
             //Handle errors for JDBC
-
+            
         }
         finally {
             //finally block used to close resources
@@ -75,4 +75,66 @@ public class Paciente {
             return "{\"estado:exito\"}";
         return "{\"estado:error\"}";
     }
+    
+    
+    @WebMethod(operationName = "consultar_Paciente")
+    public String consultar_Paciente(@WebParam(name = "dpi")String dpi) throws SQLException {
+        
+        String sql="";
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet result;
+        
+        try {
+           InitialContext ctx = new InitialContext();
+           DataSource ds = (DataSource)ctx.lookup("java:/CentroSaludDS");
+           conn =  ds.getConnection();
+            stmt = conn.createStatement();
+           
+            
+            sql = "select nombre, fecha_nac, Genero, direccion, telefono, estado, correo from Paciente Where dpi = "+dpi+";";
+            result = stmt.executeQuery(sql);
+            if(result!= null){
+                while(result.next()){
+                    String nombre = result.getString("nombre");
+                    String fecha_nac = result.getString("fecha_nac");
+                    String Genero = result.getString("Genero");
+                    String direccion = result.getString("direccion");
+                    String telefono = result.getString("telefono");
+                    String estado = result.getString("estado");
+                    String correo = result.getString("correo");
+                    return "{"
+                            +"\"nombre\": \""+nombre+"\","
+                            +"\"fecha_nac\": \""+fecha_nac+"\","
+                            +"\"genero\": \""+Genero+"\","
+                            +"\"direccion\": \""+direccion+"\","
+                            +"\"telefono\": \""+telefono+"\","
+                            +"\"estado\": \""+estado+"\","
+                            +"\"correo\": \""+correo+"\""
+                            +"}";
+                }
+            }
+            else{
+                return "{\"error\"}";
+            }
+            
+            System.out.println(sql);
+            
+        } catch (NumberFormatException | SQLException | NamingException se) {
+            //Handle errors for JDBC
+            return ""+se;
+        }
+        finally {
+            //finally block used to close resources
+            if (stmt != null) {
+                conn.close();
+            } // do nothing
+            if (conn != null) {
+                conn.close();
+            } //end finally try
+        };
+        return "{\"error\"}";
+    }
+    
+    
 }
