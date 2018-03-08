@@ -113,7 +113,7 @@ public class Doctor {
             
         } catch (NumberFormatException | SQLException | NamingException se) {
             //Handle errors for JDBC
-            return ""+se;
+            return "{\"error\"}";
         }
         finally {
             //finally block used to close resources
@@ -124,5 +124,51 @@ public class Doctor {
                 conn.close();
             } //end finally try
         }
+    }
+    
+    
+    @WebMethod(operationName = "consultar_Doctor")
+    public String hello(@WebParam(name = "idDoctor") String idoctor) throws SQLException {
+        boolean result = false;
+        String sql = "";
+        Connection conn = null;
+        ResultSet rs = null;
+        Statement stmt = null;
+        String json="";
+        try {
+           InitialContext ctx = new InitialContext();
+           DataSource ds = (DataSource)ctx.lookup("java:/CentroSaludDS");
+           conn =  ds.getConnection();
+           stmt = conn.createStatement();
+                      
+            sql = "select Nombre, LicenciaMedica,Fecha_Nac, Especialidad from Doctor where idDoctor="+idoctor;
+            
+            rs = stmt.executeQuery(sql);
+            result=true;            
+            while(rs.next()){
+                json+= "{\n \"nombre\" : \""+rs.getString("Nombre")+" \",\n"+
+                        "\"licencia\" : \""+rs.getString("LicenciaMedica")+"\",\n"+
+                        "\"fecha\" : \""+rs.getString("Fecha_Nac")+"\",\n"+
+                        "\"especialidad\" : \""+rs.getString("Especialidad")+"\",\n}";
+            }
+            System.out.println(sql+"\n"+json);
+            
+        } catch (NumberFormatException | SQLException | NamingException se) {
+            //Handle errors for JDBC
+            return "{\"error\"}";
+        }
+        finally {
+            //finally block used to close resources
+            if (stmt != null) {
+                conn.close();
+            } // do nothing
+            if (conn != null) {
+                conn.close();
+            } //end finally try
+        };
+        
+        if(result)
+            return json;
+        return "{\"estado:error\"}";
     }
 }
