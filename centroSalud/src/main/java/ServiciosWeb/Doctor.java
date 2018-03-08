@@ -72,4 +72,58 @@ public class Doctor {
             return "{\"estado:exito\"}";
         return "{\"estado:error\"}";
     }
+    
+    @WebMethod(operationName = "consultar_Doctores")
+    public String consultar_Paciente() throws SQLException {
+        
+        String sql="";
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet result;
+        
+        try {
+           InitialContext ctx = new InitialContext();
+           DataSource ds = (DataSource)ctx.lookup("java:/CentroSaludDS");
+           conn =  ds.getConnection();
+            stmt = conn.createStatement();
+           
+            
+            sql = "select idDoctor, nombre, licenciaMedica, Fecha_Nac, Especialidad from Doctor;";
+            result = stmt.executeQuery(sql);
+            String returns="{\n";
+            if(result!= null){
+                while(result.next()){
+                    String id = result.getString("idDoctor");
+                    String nombre = result.getString("nombre");
+                    String fecha_nac = result.getString("fecha_nac");
+                    String licencia = result.getString("licenciaMedica");
+                    String especialidad = result.getString("Especialidad");
+                    returns+= id+":{\n" 
+                             + "\"nombre\": \""+nombre+"\",\n"
+                             +"\"licencia\": \""+licencia+"\",\n"
+                             +"\"fecha_nac\": \""+fecha_nac+"\",\n"
+                             +"\"especialidad\": \""+especialidad+"\" \n}\n";
+                }
+                returns+="}";
+                return returns;
+            }
+            else{
+                return "{\"error\"}";
+            }
+            
+        } catch (NumberFormatException | SQLException | NamingException se) {
+            //Handle errors for JDBC
+            return ""+se;
+        }
+        finally {
+            //finally block used to close resources
+            if (stmt != null) {
+                conn.close();
+            } // do nothing
+            if (conn != null) {
+                conn.close();
+            } //end finally try
+        }
+        return "{\"error\"}";
+    }
 }
