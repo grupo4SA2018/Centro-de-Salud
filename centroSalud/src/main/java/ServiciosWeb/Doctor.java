@@ -124,6 +124,5 @@ public class Doctor {
                 conn.close();
             } //end finally try
         }
-        return "{\"error\"}";
     }
 }
