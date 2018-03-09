@@ -48,6 +48,7 @@ public class Diagnostico {
             while ( idTran.next() ) {
                 String cod = idTran.getString("idCita");
                 codigoReceta = cod;
+                
             }
             
             int cita = Integer.parseInt(codigoReceta);
