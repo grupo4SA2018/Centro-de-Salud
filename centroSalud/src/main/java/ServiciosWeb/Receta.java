@@ -27,7 +27,7 @@ public class Receta {
      * Registro de una receta
      */
      @WebMethod(operationName = "registro_Receta")
-   public String registro_Receta(@WebParam(name = "idCita") int cita, @WebParam(name = "cantidad") int cantidad, @WebParam(name = "idMedicamento") int medicamento) throws SQLException {
+   public String registro_Receta(@WebParam(name = "cantidad") int cantidad, @WebParam(name = "idMedicamento") int medicamento) throws SQLException {
         String sql="";
         Connection conn = null;
         Statement stmt = null;
@@ -38,6 +38,21 @@ public class Receta {
            DataSource ds = (DataSource)ctx.lookup("java:/CentroSaludDS");
            conn =  ds.getConnection();
             stmt = conn.createStatement();
+            
+            sql = "select max(idCita) idCita from Cita;";
+            String codigocita="1";
+            
+            
+            ResultSet idcita = stmt.executeQuery(sql); 
+            
+            while ( idcita.next() ) {
+                String cod = idcita.getString("idCita");
+                codigocita = cod;
+                
+            }
+            
+            int cita = Integer.parseInt(codigocita);
+            
             
             sql = "insert into Receta (cita)"+
                     " values ("+cita+")";
