@@ -88,8 +88,9 @@ public class Medicamento {
             json = "{\n";
             while(rs.next()){
                 json    += rs.getString("idMedicamento")+":{\n\"nombre\" : \""
-                        +rs.getString("Nombre")+"\"}";
+                        +rs.getString("Nombre")+"\"},\n";
             }
+            json = json.substring(0, json.length()-2);
             json += "\n}";
             System.out.println(sql+"\n"+json);
             

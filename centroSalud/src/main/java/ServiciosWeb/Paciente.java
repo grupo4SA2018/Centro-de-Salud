@@ -186,7 +186,7 @@ public class Paciente {
                 hCita+="},\n";        
                  
                 }
-                hCita += hCita.substring(0, hCita.length()-2);
+                hCita = hCita.substring(0, hCita.length()-2);
                 
                 
                 return Paciente+hCita+"}";
@@ -209,5 +209,50 @@ public class Paciente {
             } //end finally try
         }
     }
+    
+    @WebMethod(operationName = "obtenerIdPaciente")
+    public String obtenerIdPaciente(@WebParam(name = "dpi")String dpi) throws SQLException {
+        
+        String sql="";
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet result;
+        
+        try {
+           InitialContext ctx = new InitialContext();
+           DataSource ds = (DataSource)ctx.lookup("java:/CentroSaludDS");
+           conn =  ds.getConnection();
+            stmt = conn.createStatement();
+           
+            
+            sql = "select idPaciente from Paciente Where dpi = "+dpi+";";
+            result = stmt.executeQuery(sql);
+            if(result!= null){
+                while(result.next()){
+                    return result.getString("idPaciente");
+                }
+            }
+            else{
+                return "{\"error\"}";
+            }
+            
+            System.out.println(sql);
+            
+        } catch (NumberFormatException | SQLException | NamingException se) {
+            //Handle errors for JDBC
+            return ""+se;
+        }
+        finally {
+            //finally block used to close resources
+            if (stmt != null) {
+                conn.close();
+            } // do nothing
+            if (conn != null) {
+                conn.close();
+            } //end finally try
+        };
+        return "{\"error\"}";
+    }
+    
     
 }

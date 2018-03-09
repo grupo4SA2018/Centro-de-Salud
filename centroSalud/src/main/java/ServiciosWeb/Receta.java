@@ -111,6 +111,7 @@ public class Receta {
                 json+= "{\n\"nombre\" : \""+rs.getString("Nombre")+" \",\n"
                         +"\"cantidad\" : \""+rs.getString("Cantidad")+" \"},\n";
             }
+            json = json.substring(0, json.length()-2);
             json += "}";
             System.out.println(sql+"\n"+json);
             
