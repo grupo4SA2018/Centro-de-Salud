@@ -6,6 +6,7 @@
 package ServiciosWeb;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.jws.WebService;
@@ -26,7 +27,7 @@ public class Diagnostico {
      * Registro de un Diagnostico
      */
     @WebMethod(operationName = "registro_Diagnostico")
-   public String registro_TrasladoPaciente(@WebParam(name = "descripcion") String descripcion, @WebParam(name = "idCita") int cita, @WebParam(name = "idEnfermedad") int enfermedad) throws SQLException {
+   public String registro_TrasladoPaciente(@WebParam(name = "descripcion") String descripcion, @WebParam(name = "idEnfermedad") int enfermedad) throws SQLException {
         String sql="";
         Connection conn = null;
         Statement stmt = null;
@@ -37,6 +38,16 @@ public class Diagnostico {
            DataSource ds = (DataSource)ctx.lookup("java:/CentroSaludDS");
            conn =  ds.getConnection();
             stmt = conn.createStatement();
+            
+            sql = "select max(idCita) idCita from Cita;";
+            String codigoReceta="1";
+            ResultSet idTran = stmt.executeQuery(sql); 
+              while ( idTran.next() ) {
+                String cod = idTran.getString("idCita");
+                codigoReceta = cod;
+            }
+            
+              int cita = Integer.parseInt(codigoReceta);
             
             sql = "insert into Diagnostico ( descripcion,cita,Enfermedad_idEnfermedad)"+
                     " values ('"+descripcion+"',"+cita+","+enfermedad+")";
