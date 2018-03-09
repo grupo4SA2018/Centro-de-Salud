@@ -104,8 +104,8 @@ public class Doctor {
                              +"\"fecha_nac\": \""+fecha_nac+"\",\n"
                              +"\"especialidad\": \""+especialidad+"\" \n},\n";
                 }
-                returns = returns.substring(0, returns.length()-1);
-                returns+="}";
+                returns = returns.substring(0, returns.length()-2);
+                returns+="\n}";
                 return returns;
             }
             else{
