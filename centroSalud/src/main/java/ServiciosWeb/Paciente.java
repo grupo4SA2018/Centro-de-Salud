@@ -179,25 +179,25 @@ public class Paciente {
                 ResultSet result2 = stmt.executeQuery(sql);
                 while(result2.next()){
                     String nombreEnf = result.getString("Nombre Enfermedad");
-                    hCita+="\"enfermedad: \""+nombreEnf+"\",";
+                    hCita+="\"enfermedad: \""+nombreEnf+"\",\n";
                 }
-                hCita = hCita.substring(0, hCita.length()-1);
-                hCita+="}";
-                hCita+="},";        
+                hCita = hCita.substring(0, hCita.length()-2);
+                hCita+="}\n";
+                hCita+="},\n";        
                  
                 }
-                hCita = hCita.substring(0, hCita.length()-1);
-                Paciente+="}";
+                hCita += hCita.substring(0, hCita.length()-2);
+                
+                
+                return Paciente+hCita+"}";
             }
             else{
                 return "{\"error\"}";
             }
             
-            System.out.println(sql);
-            
         } catch (NumberFormatException | SQLException | NamingException se) {
             //Handle errors for JDBC
-            return ""+se;
+            return "{\"error\"}";
         }
         finally {
             //finally block used to close resources
@@ -207,8 +207,7 @@ public class Paciente {
             if (conn != null) {
                 conn.close();
             } //end finally try
-        };
-        return "{\"error\"}";
+        }
     }
     
 }

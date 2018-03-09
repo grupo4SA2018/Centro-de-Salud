@@ -102,8 +102,9 @@ public class Doctor {
                              + "\"nombre\": \""+nombre+"\",\n"
                              +"\"licencia\": \""+licencia+"\",\n"
                              +"\"fecha_nac\": \""+fecha_nac+"\",\n"
-                             +"\"especialidad\": \""+especialidad+"\" \n}\n";
+                             +"\"especialidad\": \""+especialidad+"\" \n},\n";
                 }
+                returns = returns.substring(0, returns.length()-1);
                 returns+="}";
                 return returns;
             }
