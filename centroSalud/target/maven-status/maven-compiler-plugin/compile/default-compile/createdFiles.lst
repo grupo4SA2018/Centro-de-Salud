@@ -1,0 +1,10 @@
+ServiciosWeb/Paciente.class
+ServiciosWeb/Diagnostico.class
+ServiciosWeb/TrasladoPaciente.class
+ServiciosWeb/Medicamento.class
+ServiciosWeb/CentroSalud.class
+ServiciosWeb/Receta.class
+ServiciosWeb/Doctor.class
+ServiciosWeb/Cita.class
+ServiciosWeb/DetalleReceta.class
+ServiciosWeb/Enfermedad.class
