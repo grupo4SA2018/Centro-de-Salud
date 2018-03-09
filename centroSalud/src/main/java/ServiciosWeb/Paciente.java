@@ -143,14 +143,15 @@ public class Paciente {
         String sql="";
         Connection conn = null;
         Statement stmt = null;
+        Statement stmt2 = null;
         ResultSet result;
         
         try {
            InitialContext ctx = new InitialContext();
            DataSource ds = (DataSource)ctx.lookup("java:/CentroSaludDS");
            conn =  ds.getConnection();
-            stmt = conn.createStatement();
-           
+           stmt = conn.createStatement();
+           stmt2 = conn.createStatement();
             
             sql = "select P.nombre as 'Nombre Paciente', P.Genero, D.nombre as 'Nombre Doctor', C.Fecha, C.idCita  from Paciente as P, Cita as C , Doctor as D where P.dpi = '"+dpi+"' and P.idPaciente = C.Paciente and C.Doctor = D.idDoctor;";
             result = stmt.executeQuery(sql);
@@ -166,8 +167,8 @@ public class Paciente {
                 String fecha = result.getString("Fecha");
                 String idCita = result.getString("idCita");
                 
-                Paciente+="{";
-                Paciente += "\"nombrePaciente\": \""+nombrePac+"\",\n"
+                Paciente="{"
+                 + "\"nombrePaciente\": \""+nombrePac+"\",\n"
                             +"\"genero\": \""+genero+"\",\n";
                 
                 hCita+=idCita+":{"+
@@ -176,28 +177,28 @@ public class Paciente {
                         "\"diagnostico\":{\n";
                 
                 sql = "Select E.Nombre as 'Nombre Enfermedad' FROM Cita as C, Diagnostico as D, Enfermedad as E WHERE C.idCita = "+idCita+" and D.Cita = C.idCita and D.Enfermedad_idEnfermedad = E.idEnfermedad;";
-                ResultSet result2 = stmt.executeQuery(sql);
+                ResultSet result2 = stmt2.executeQuery(sql);
                 while(result2.next()){
-                    String nombreEnf = result.getString("Nombre Enfermedad");
+                    String nombreEnf = result2.getString("Nombre Enfermedad");
                     hCita+="\"enfermedad: \""+nombreEnf+"\",\n";
                 }
                 hCita = hCita.substring(0, hCita.length()-2);
-                hCita+="}\n";
-                hCita+="},\n";        
+                hCita+="\n}\n";
+                hCita+="\n},\n";        
                  
                 }
                 hCita = hCita.substring(0, hCita.length()-2);
                 
                 
-                return Paciente+hCita+"}";
+                return Paciente+hCita+"\n}";
             }
             else{
-                return "{\"error\"}";
+                return "1sadf->{\"error\"}";
             }
             
         } catch (NumberFormatException | SQLException | NamingException se) {
             //Handle errors for JDBC
-            return "{\"error\"}";
+            return "{\"error\"} "+se;
         }
         finally {
             //finally block used to close resources
