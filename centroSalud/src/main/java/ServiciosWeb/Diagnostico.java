@@ -41,13 +41,16 @@ public class Diagnostico {
             
             sql = "select max(idCita) idCita from Cita;";
             String codigoReceta="1";
+            
+            
             ResultSet idTran = stmt.executeQuery(sql); 
-              while ( idTran.next() ) {
+            
+            while ( idTran.next() ) {
                 String cod = idTran.getString("idCita");
                 codigoReceta = cod;
             }
             
-              int cita = Integer.parseInt(codigoReceta);
+            int cita = Integer.parseInt(codigoReceta);
             
             sql = "insert into Diagnostico ( descripcion,cita,Enfermedad_idEnfermedad)"+
                     " values ('"+descripcion+"',"+cita+","+enfermedad+")";
