@@ -103,14 +103,14 @@ public class Paciente {
                     String telefono = result.getString("telefono");
                     String estado = result.getString("estado");
                     String correo = result.getString("correo");
-                    return "{"
-                            +"\"nombre\": \""+nombre+"\","
-                            +"\"fecha_nac\": \""+fecha_nac+"\","
-                            +"\"genero\": \""+Genero+"\","
-                            +"\"direccion\": \""+direccion+"\","
-                            +"\"telefono\": \""+telefono+"\","
-                            +"\"estado\": \""+estado+"\","
-                            +"\"correo\": \""+correo+"\""
+                    return "{\n"
+                            +"\"nombre\": \""+nombre+"\",\n"
+                            +"\"fecha_nac\": \""+fecha_nac+"\",\n"
+                            +"\"genero\": \""+Genero+"\",\n"
+                            +"\"direccion\": \""+direccion+"\",\n"
+                            +"\"telefono\": \""+telefono+"\",\n"
+                            +"\"estado\": \""+estado+"\",\n"
+                            +"\"correo\": \""+correo+"\"\n"
                             +"}";
                 }
             }
@@ -136,5 +136,78 @@ public class Paciente {
         return "{\"error\"}";
     }
     
+    
+    @WebMethod(operationName = "historial_Paciente")
+    public String historial_Paciente(@WebParam(name = "dpi")String dpi) throws SQLException {
+        
+        String sql="";
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet result;
+        
+        try {
+           InitialContext ctx = new InitialContext();
+           DataSource ds = (DataSource)ctx.lookup("java:/CentroSaludDS");
+           conn =  ds.getConnection();
+            stmt = conn.createStatement();
+           
+            
+            sql = "select P.nombre as 'Nombre Paciente', P.Genero, D.nombre as 'Nombre Doctor', C.Fecha, C.idCita  from Paciente as P, Cita as C , Doctor as D where P.dpi = '"+dpi+"' and P.idPaciente = C.Paciente and C.Doctor = D.idDoctor;";
+            result = stmt.executeQuery(sql);
+            String Paciente="";
+            String hCita="";
+            if(result!= null){
+                while(result.next()){
+               
+                String nombrePac = result.getString("Nombre Paciente");
+                String genero = result.getString("Genero");
+                
+                String nombreDoc = result.getString("Nombre Doctor");
+                String fecha = result.getString("Fecha");
+                String idCita = result.getString("idCita");
+                
+                Paciente+="{";
+                Paciente += "\"nombrePaciente\": \""+nombrePac+"\",\n"
+                            +"\"genero\": \""+genero+"\",\n";
+                
+                hCita+=idCita+":{"+
+                        "\"nombreDoctor\": \""+nombreDoc+"\",\n"+
+                        "\"fecha\": \""+fecha+"\",\n"+
+                        "\"diagnostico\":{\n";
+                
+                sql = "Select E.Nombre as 'Nombre Enfermedad' FROM Cita as C, Diagnostico as D, Enfermedad as E WHERE C.idCita = "+idCita+" and D.Cita = C.idCita and D.Enfermedad_idEnfermedad = E.idEnfermedad;";
+                ResultSet result2 = stmt.executeQuery(sql);
+                while(result2.next()){
+                    String nombreEnf = result.getString("Nombre Enfermedad");
+                    hCita+="\"enfermedad: \""+nombreEnf+"\",\n";
+                }
+                hCita = hCita.substring(0, hCita.length()-2);
+                hCita+="}\n";
+                hCita+="},\n";        
+                 
+                }
+                hCita += hCita.substring(0, hCita.length()-2);
+                
+                
+                return Paciente+hCita+"}";
+            }
+            else{
+                return "{\"error\"}";
+            }
+            
+        } catch (NumberFormatException | SQLException | NamingException se) {
+            //Handle errors for JDBC
+            return "{\"error\"}";
+        }
+        finally {
+            //finally block used to close resources
+            if (stmt != null) {
+                conn.close();
+            } // do nothing
+            if (conn != null) {
+                conn.close();
+            } //end finally try
+        }
+    }
     
 }

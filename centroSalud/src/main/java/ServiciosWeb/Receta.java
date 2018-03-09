@@ -27,7 +27,7 @@ public class Receta {
      * Registro de una receta
      */
      @WebMethod(operationName = "registro_Receta")
-   public String registro_Receta(@WebParam(name = "idCita") int cita) throws SQLException {
+   public String registro_Receta(@WebParam(name = "idCita") int cita, @WebParam(name = "cantidad") int cantidad, @WebParam(name = "idMedicamento") int medicamento) throws SQLException {
         String sql="";
         Connection conn = null;
         Statement stmt = null;
@@ -43,8 +43,26 @@ public class Receta {
                     " values ("+cita+")";
             
             result = stmt.execute(sql);
+            
+            sql = "select max(idReceta) idReceta from Receta;";
+            String codigoReceta="1";
+            ResultSet idTran = stmt.executeQuery(sql); 
+              while ( idTran.next() ) {
+                String cod = idTran.getString("idReceta");
+                codigoReceta = cod;
+            }
+            
+            
+            sql = "insert into Detalle_Receta ( cantidad,receta,medicamento)"+
+                    " values ("+cantidad+","+codigoReceta+","+medicamento+")";
+            
+            result = stmt.execute(sql);
+            
             result=true;
-            System.out.println(sql);
+            
+            
+            
+            
             
         } catch (NumberFormatException | SQLException | NamingException se) {
             //Handle errors for JDBC
