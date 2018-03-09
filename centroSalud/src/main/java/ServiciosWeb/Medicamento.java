@@ -66,4 +66,50 @@ public class Medicamento {
             return "{\"estado:exito\"}";
         return "{\"estado:error\"}";
     }
+    
+    @WebMethod(operationName = "listado_Medicamento")
+    public String listadoMedicamento() throws SQLException {
+        boolean result = false;
+        String sql = "";
+        Connection conn = null;
+        ResultSet rs = null;
+        Statement stmt = null;
+        String json="";
+        try {
+           InitialContext ctx = new InitialContext();
+           DataSource ds = (DataSource)ctx.lookup("java:/CentroSaludDS");
+           conn =  ds.getConnection();
+           stmt = conn.createStatement();
+                      
+            sql = "select * from Medicamento";
+            
+            rs = stmt.executeQuery(sql);
+            result=true;        
+            json = "{\n";
+            while(rs.next()){
+                json    += rs.getString("idMedicamento")+":{\n\"nombre\" : \""
+                        +rs.getString("Nombre")+"\"}";
+            }
+            json += "\n}";
+            System.out.println(sql+"\n"+json);
+            
+        } catch (NumberFormatException | SQLException | NamingException se) {
+            //Handle errors for JDBC
+            return "{\"error\"}";
+        }
+        finally {
+            //finally block used to close resources
+            if (stmt != null) {
+                conn.close();
+            } // do nothing
+            if (conn != null) {
+                conn.close();
+            } //end finally try
+        };
+        
+        if(result)
+            return json;
+        return "{\"estado:error\"}";
+    }
+    
 }

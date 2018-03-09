@@ -74,7 +74,7 @@ public class Doctor {
     }
     
     @WebMethod(operationName = "consultar_Doctores")
-    public String consultar_Paciente() throws SQLException {
+    public String consultar_Doctores() throws SQLException {
         
         String sql="";
         Connection conn = null;
@@ -128,7 +128,7 @@ public class Doctor {
     
     
     @WebMethod(operationName = "consultar_Doctor")
-    public String hello(@WebParam(name = "idDoctor") String idoctor) throws SQLException {
+    public String consultarDoctor(@WebParam(name = "idDoctor") String idoctor) throws SQLException {
         boolean result = false;
         String sql = "";
         Connection conn = null;
