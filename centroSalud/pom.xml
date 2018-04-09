@@ -13,12 +13,12 @@
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-     <!-- repositorio hace la magia de test funcional -->
+    <!-- repositorio hace la magia de test funcional -->
     <repositories>
         <repository>
-			<id>my-local-repo</id>
-			<url>${project.basedir}/src/test/resources/</url>
-		</repository>
+            <id>my-local-repo</id>
+            <url>${project.basedir}/src/test/resources/</url>
+        </repository>
         <repository>
             <id>smartbear</id>
             <name>smartbear repository</name>
@@ -68,6 +68,11 @@
             <artifactId>javaee-web-api</artifactId>
             <version>7.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180130</version>
         </dependency>
     </dependencies>
 
