@@ -170,7 +170,7 @@ public class Paciente {
                             + "\"nombrePaciente\": \"" + nombrePac + "\",\n"
                             + "\"genero\": \"" + genero + "\",\n";
 
-                    hCita += idCita + ":{"
+                    hCita += "Cita_"+idCita + ":{"
                             + "\"nombreDoctor\": \"" + nombreDoc + "\",\n"
                             + "\"fecha\": \"" + fecha + "\",\n"
                             + "\"diagnostico\":{\n";
@@ -182,20 +182,35 @@ public class Paciente {
                         hCita += "\"enfermedad: \"" + nombreEnf + "\",\n";
                     }
                     hCita = hCita.substring(0, hCita.length() - 2);
-                    hCita += "\n}\n";
-                    hCita += "\n},\n";
+                    hCita += "\n}\n"; //cierre enfermedades
+                    hCita += "\n},\n"; // cierre cita
 
                 }
                 hCita = hCita.substring(0, hCita.length() - 2);
-
-                return Paciente + hCita + "\n}";
+                hCita+="\n";
+                sql = "SELECT Fecha, Destino, Origen "
+                        + "FROM Traslado_Paciente, Paciente\n" +
+                "WHERE Paciente.DPI = Traslado_Paciente.Paciente AND Traslado_Paciente.Paciente = '"+dpi+"';";
+                    ResultSet result3 = stmt2.executeQuery(sql);
+                    int cont = 1;
+                    while (result3.next()) {
+                        String fecha = result3.getString("Fecha");
+                        String destino = result3.getString("Destino");
+                        String origen = result3.getString("Origen");
+                        hCita+= "Traslado_"+cont+":{\"Fecha\":\""+fecha+"\",\n"+
+                                "\"Destino\":"+destino+" ,\n\"Origen\":"+origen+"},\n";
+                        cont++;
+                    }
+                hCita = hCita.substring(0, hCita.length() - 2);
+                hCita+="\n";
+                return Paciente + hCita + "\n}"; // cierre
             } else {
                 return "{\"error\"}";
             }
 
         } catch (NumberFormatException | SQLException | NamingException se) {
             //Handle errors for JDBC
-            return "{\"error\"} ";
+            return "{\"error\"} "+se;
         } finally {
             //finally block used to close resources
             if (stmt != null) {
@@ -255,30 +270,21 @@ public class Paciente {
         JSONObject jObject = new JSONObject(entrada);
         String dpi = (String) jObject.get("dpi").toString();
         String destino = (String) jObject.get("destino").toString();
-        String origen = "7";
+        String origen = "4";
         
         String sql = "";
         Connection conn = null;
         Statement stmt = null;
-        ResultSet result;
-
+        boolean result = false;
         try {
             InitialContext ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup("java:/CentroSaludDS");
             conn = ds.getConnection();
             stmt = conn.createStatement();
 
-            sql = "select idPaciente from Paciente Where dpi = " + dpi + ";";
-            result = stmt.executeQuery(sql);
-            if (result != null) {
-                while (result.next()) {
-                    return result.getString("idPaciente");
-                }
-            } else {
-                return "{\"error\"}";
-            }
-
-            System.out.println(sql);
+            sql = "INSERT INTO Traslado_Paciente (Fecha,Destino,Origen,Paciente) VALUES (CURDATE(),"+destino+",4,'"+dpi+"')";
+            result = stmt.execute(sql);
+            result = true;
 
         } catch (NumberFormatException | SQLException | NamingException se) {
             //Handle errors for JDBC
@@ -292,7 +298,10 @@ public class Paciente {
                 conn.close();
             } //end finally try
         };
-        return "{\"error\"}";
+        if (result) {
+            return "{\"estado:exito\"}";
+        }
+        return "{\"estado:error\"}";
     }
     
 }
