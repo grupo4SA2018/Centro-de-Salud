@@ -218,18 +218,17 @@ public class Paciente {
                     if (Paciente.length() > 3) {
                         return Paciente + hCita + "\n}"; // cierre
                     } else {
-                        return "{\"error\"}";
+                        return "{\"estado\":\"error\"}";
                     }
                 } else {
-                    return "{\"error\"}";
+                    return "{\"estado\":\"error\"}";
                 }
-            }
-            else{
-                return "{\"error\"}";
+            } else {
+                return "{\"estado\":\"error\"}";
             }
         } catch (NumberFormatException | SQLException | NamingException se) {
             //Handle errors for JDBC
-            return "{\"error\"} " + se;
+            return "{\"estado\":\"error\"}";
         } finally {
             //finally block used to close resources
             if (stmt != null) {
@@ -262,14 +261,14 @@ public class Paciente {
                     return result.getString("idPaciente");
                 }
             } else {
-                return "{\"error\"}";
+                return "{\"estado\":\"error\"}";
             }
 
             System.out.println(sql);
 
         } catch (NumberFormatException | SQLException | NamingException se) {
             //Handle errors for JDBC
-            return "" + se;
+            return "{\"estado\":\"error\"}";
         } finally {
             //finally block used to close resources
             if (stmt != null) {
@@ -279,22 +278,21 @@ public class Paciente {
                 conn.close();
             } //end finally try
         };
-        return "{\"error\"}";
+        return "{\"estado\":\"error\"}";
     }
 
     @WebMethod(operationName = "trasladoPaciente")
     public String trasladoPaciente(@WebParam(name = "entrada") String entrada) throws SQLException {
-
-        JSONObject jObject = new JSONObject(entrada);
-        String dpi = (String) jObject.get("dpi").toString();
-        String destino = (String) jObject.get("destino").toString();
-        String origen = "4";
-
         String sql = "";
         Connection conn = null;
         Statement stmt = null;
         boolean result = false;
         try {
+            JSONObject jObject = new JSONObject(entrada);
+            String dpi = (String) jObject.get("dpi").toString();
+            String destino = (String) jObject.get("destino").toString();
+            String origen = "4";
+
             InitialContext ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup("java:/CentroSaludDS");
             conn = ds.getConnection();
@@ -304,9 +302,9 @@ public class Paciente {
             result = stmt.execute(sql);
             result = true;
 
-        } catch (NumberFormatException | SQLException | NamingException se) {
+        } catch (Exception se) {
             //Handle errors for JDBC
-            return "" + se;
+            return "{\"estado\":\"error\"}";
         } finally {
             //finally block used to close resources
             if (stmt != null) {
@@ -317,9 +315,9 @@ public class Paciente {
             } //end finally try
         };
         if (result) {
-            return "{\"estado:exito\"}";
+            return "{\"estado\":\"exito\"}";
         }
-        return "{\"estado:error\"}";
+        return "{\"estado\":\"error\"}";
     }
 
 }
