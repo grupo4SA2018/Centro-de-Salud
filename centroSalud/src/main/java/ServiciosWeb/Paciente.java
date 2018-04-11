@@ -249,9 +249,14 @@ public class Paciente {
     }
 
     
-     @WebMethod(operationName = "obtenerIdPaciente")
-    public String trasladoPaciente(@WebParam(name = "dpi") String dpi) throws SQLException {
-
+     @WebMethod(operationName = "trasladoPaciente")
+    public String trasladoPaciente(@WebParam(name = "entrada") String entrada) throws SQLException {
+        
+        JSONObject jObject = new JSONObject(entrada);
+        String dpi = (String) jObject.get("dpi").toString();
+        String destino = (String) jObject.get("destino").toString();
+        String origen = "7";
+        
         String sql = "";
         Connection conn = null;
         Statement stmt = null;
