@@ -136,12 +136,13 @@ public class Paciente {
     @WebMethod(operationName = "historial_Paciente")
     public String historial_Paciente(@WebParam(name = "dpi") String dpi) throws SQLException {
 
-       JSONObject jObject = new JSONObject(dpi);
-       dpi = (String) jObject.get("dpi").toString();
+        JSONObject jObject = new JSONObject(dpi);
+        dpi = (String) jObject.get("dpi").toString();
 
         String sql = "";
         Connection conn = null;
         Statement stmt = null;
+        Statement stmt0 = null;
         Statement stmt2 = null;
         ResultSet result;
 
@@ -150,67 +151,85 @@ public class Paciente {
             DataSource ds = (DataSource) ctx.lookup("java:/CentroSaludDS");
             conn = ds.getConnection();
             stmt = conn.createStatement();
+            stmt0 = conn.createStatement();
             stmt2 = conn.createStatement();
 
-            sql = "select P.nombre as 'Nombre Paciente', P.Genero, D.nombre as 'Nombre Doctor', C.Fecha, C.idCita  from Paciente as P, Cita as C , Doctor as D where P.dpi = '" + dpi + "' and P.idPaciente = C.Paciente and C.Doctor = D.idDoctor;";
-            result = stmt.executeQuery(sql);
-            String Paciente = "";
-            String hCita = "";
-            if (result != null) {
-                while (result.next()) {
+            sql = "SELECT Nombre, Genero FROM Paciente WHERE DPI = " + dpi + ";";
+            ResultSet result0;
+            result0 = stmt0.executeQuery(sql);
+            if (result0.next()) {
 
-                    String nombrePac = result.getString("Nombre Paciente");
-                    String genero = result.getString("Genero");
+                String Paciente = "";
+                String nombrePac = result0.getString("Nombre");
+                String genero = result0.getString("Genero");
 
-                    String nombreDoc = result.getString("Nombre Doctor");
-                    String fecha = result.getString("Fecha");
-                    String idCita = result.getString("idCita");
+                Paciente = "{"
+                        + "\"nombrePaciente\": \"" + nombrePac + "\",\n"
+                        + "\"genero\": \"" + genero + "\",\n";
 
-                    Paciente = "{"
-                            + "\"nombrePaciente\": \"" + nombrePac + "\",\n"
-                            + "\"genero\": \"" + genero + "\",\n";
+                sql = "select P.nombre as 'Nombre Paciente', P.Genero, D.nombre as 'Nombre Doctor', C.Fecha, C.idCita  from Paciente as P, Cita as C , Doctor as D where P.dpi = '" + dpi + "' and P.idPaciente = C.Paciente and C.Doctor = D.idDoctor;";
+                result = stmt.executeQuery(sql);
+                String hCita = "";
+                if (result != null) {
+                    while (result.next()) {
 
-                    hCita += "Cita_"+idCita + ":{"
-                            + "\"nombreDoctor\": \"" + nombreDoc + "\",\n"
-                            + "\"fecha\": \"" + fecha + "\",\n"
-                            + "\"diagnostico\":{\n";
+                        String nombreDoc = result.getString("Nombre Doctor");
+                        String fecha = result.getString("Fecha");
+                        String idCita = result.getString("idCita");
 
-                    sql = "Select E.Nombre as 'Nombre Enfermedad' FROM Cita as C, Diagnostico as D, Enfermedad as E WHERE C.idCita = " + idCita + " and D.Cita = C.idCita and D.Enfermedad_idEnfermedad = E.idEnfermedad;";
-                    ResultSet result2 = stmt2.executeQuery(sql);
-                    while (result2.next()) {
-                        String nombreEnf = result2.getString("Nombre Enfermedad");
-                        hCita += "\"enfermedad: \"" + nombreEnf + "\",\n";
+                        hCita += "Cita_" + idCita + ":{"
+                                + "\"nombreDoctor\": \"" + nombreDoc + "\",\n"
+                                + "\"fecha\": \"" + fecha + "\",\n"
+                                + "\"diagnostico\":{\n";
+
+                        sql = "Select E.Nombre as 'Nombre Enfermedad' FROM Cita as C, Diagnostico as D, Enfermedad as E WHERE C.idCita = " + idCita + " and D.Cita = C.idCita and D.Enfermedad_idEnfermedad = E.idEnfermedad;";
+                        ResultSet result2 = stmt2.executeQuery(sql);
+                        while (result2.next()) {
+                            String nombreEnf = result2.getString("Nombre Enfermedad");
+                            hCita += "\"enfermedad: \"" + nombreEnf + "\",\n";
+                        }
+                        if (hCita.length() > 2) {
+                            hCita = hCita.substring(0, hCita.length() - 2);
+                            hCita += "\n}\n"; //cierre enfermedades
+                            hCita += "\n},\n"; // cierre cita
+                        }
                     }
-                    hCita = hCita.substring(0, hCita.length() - 2);
-                    hCita += "\n}\n"; //cierre enfermedades
-                    hCita += "\n},\n"; // cierre cita
-
-                }
-                hCita = hCita.substring(0, hCita.length() - 2);
-                hCita+="\n";
-                sql = "SELECT Fecha, Destino, Origen "
-                        + "FROM Traslado_Paciente, Paciente\n" +
-                "WHERE Paciente.DPI = Traslado_Paciente.Paciente AND Traslado_Paciente.Paciente = '"+dpi+"';";
+                    if (hCita.length() > 2) {
+                        hCita = hCita.substring(0, hCita.length() - 2);
+                        hCita += "\n";
+                    }
+                    sql = "SELECT Fecha, Destino, Origen "
+                            + "FROM Traslado_Paciente, Paciente\n"
+                            + "WHERE Paciente.DPI = Traslado_Paciente.Paciente AND Traslado_Paciente.Paciente = '" + dpi + "';";
                     ResultSet result3 = stmt2.executeQuery(sql);
                     int cont = 1;
                     while (result3.next()) {
                         String fecha = result3.getString("Fecha");
                         String destino = result3.getString("Destino");
                         String origen = result3.getString("Origen");
-                        hCita+= "Traslado_"+cont+":{\"Fecha\":\""+fecha+"\",\n"+
-                                "\"Destino\":"+destino+" ,\n\"Origen\":"+origen+"},\n";
+                        hCita += "Traslado_" + cont + ":{\"Fecha\":\"" + fecha + "\",\n"
+                                + "\"Destino\":" + destino + " ,\n\"Origen\":" + origen + "},\n";
                         cont++;
                     }
-                hCita = hCita.substring(0, hCita.length() - 2);
-                hCita+="\n";
-                return Paciente + hCita + "\n}"; // cierre
-            } else {
+                    if (hCita.length() > 2) {
+                        hCita = hCita.substring(0, hCita.length() - 2);
+                        hCita += "\n";
+                    }
+                    if (Paciente.length() > 3) {
+                        return Paciente + hCita + "\n}"; // cierre
+                    } else {
+                        return "{\"error\"}";
+                    }
+                } else {
+                    return "{\"error\"}";
+                }
+            }
+            else{
                 return "{\"error\"}";
             }
-
         } catch (NumberFormatException | SQLException | NamingException se) {
             //Handle errors for JDBC
-            return "{\"error\"} "+se;
+            return "{\"error\"} " + se;
         } finally {
             //finally block used to close resources
             if (stmt != null) {
@@ -263,15 +282,14 @@ public class Paciente {
         return "{\"error\"}";
     }
 
-    
-     @WebMethod(operationName = "trasladoPaciente")
+    @WebMethod(operationName = "trasladoPaciente")
     public String trasladoPaciente(@WebParam(name = "entrada") String entrada) throws SQLException {
-        
+
         JSONObject jObject = new JSONObject(entrada);
         String dpi = (String) jObject.get("dpi").toString();
         String destino = (String) jObject.get("destino").toString();
         String origen = "4";
-        
+
         String sql = "";
         Connection conn = null;
         Statement stmt = null;
@@ -282,7 +300,7 @@ public class Paciente {
             conn = ds.getConnection();
             stmt = conn.createStatement();
 
-            sql = "INSERT INTO Traslado_Paciente (Fecha,Destino,Origen,Paciente) VALUES (CURDATE(),"+destino+",4,'"+dpi+"')";
+            sql = "INSERT INTO Traslado_Paciente (Fecha,Destino,Origen,Paciente) VALUES (CURDATE()," + destino + ",4,'" + dpi + "')";
             result = stmt.execute(sql);
             result = true;
 
@@ -303,5 +321,5 @@ public class Paciente {
         }
         return "{\"estado:error\"}";
     }
-    
+
 }
