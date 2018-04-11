@@ -148,4 +148,53 @@ public class Receta {
             return json;
         return "{\"error\"}";
     }
+    
+    @WebMethod(operationName = "obtenerIdReceta")
+    public String obtenerIdReceta(@WebParam(name = "idPaciente") String idPaciente) throws SQLException {
+        boolean result = false;
+        String sql = "";
+        String sql1 = "";
+        Connection conn = null;
+        ResultSet rs = null;
+        Statement stmt = null;
+        String json="";
+        try {
+           InitialContext ctx = new InitialContext();
+           DataSource ds = (DataSource)ctx.lookup("java:/CentroSaludDS");
+           conn =  ds.getConnection();
+           stmt = conn.createStatement();
+           
+            sql = "select r.idReceta as id from Receta r inner join Cita c"
+                    + " on c.idCita = r.Cita where c.Realizada = 0 and c.Paciente ="+idPaciente+";";
+            
+            rs = stmt.executeQuery(sql);
+            result=true;    
+            if(rs != null){
+                while(rs.next()){
+                    json = rs.getString("id");
+                    return rs.getString("id");
+                }
+            }else{
+                return "{\"error\"}";
+            }            
+        } catch (NumberFormatException | SQLException | NamingException se) {
+            //Handle errors for JDBC
+            return "{\"error\"}";
+        }
+        finally {
+            //finally block used to close resources
+            if (stmt != null) {
+                conn.close();
+            } // do nothing
+            if (conn != null) {
+                conn.close();
+            } //end finally try
+        };
+        
+        if(result)
+            return json;
+        return "{\"error\"}";
+    }
 }
+
+
