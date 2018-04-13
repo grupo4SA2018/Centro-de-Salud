@@ -186,7 +186,7 @@ public class Paciente {
                         ResultSet result2 = stmt2.executeQuery(sql);
                         while (result2.next()) {
                             String nombreEnf = result2.getString("Nombre Enfermedad");
-                            hCita += "\"enfermedad: \"" + nombreEnf + "\",\n";
+                            hCita += "\"enfermedad\": \"" + nombreEnf + "\",\n";
                         }
                         if (hCita.length() > 2) {
                             hCita = hCita.substring(0, hCita.length() - 2);
@@ -280,6 +280,8 @@ public class Paciente {
         };
         return "{\"estado\":\"error\"}";
     }
+    
+    
 
     @WebMethod(operationName = "trasladoPaciente")
     public String trasladoPaciente(@WebParam(name = "entrada") String entrada) throws SQLException {

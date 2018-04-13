@@ -115,7 +115,7 @@ public class Receta {
            conn =  ds.getConnection();
            stmt = conn.createStatement();
            
-            sql = "select m.Nombre as Nombre, dr.cantidad as Cantidad from Detalle_Receta dr "
+            sql = "select m.Nombre as Nombre, dr.cantidad as Cantidad, m.idMedicamento as id from Detalle_Receta dr "
                     + "inner join Receta r on dr.Receta = r.idReceta inner join"
                     + " Medicamento m on m.idMedicamento = dr.Medicamento where r.idReceta ="+idReceta;
             
@@ -123,11 +123,12 @@ public class Receta {
             result=true;    
             json = "{\n";
             while(rs.next()){
-                json+= "{\n\"nombre\" : \""+rs.getString("Nombre")+" \",\n"
+                json += "\"meds_"+rs.getString("id")+"\":{";
+                json+= "\"nombre\" : \""+rs.getString("Nombre")+" \",\n"
                         +"\"cantidad\" : \""+rs.getString("Cantidad")+" \"},\n";
             }
             json = json.substring(0, json.length()-2);
-            json += "}";
+            json += "\n}";
             System.out.println(sql+"\n"+json);
             
         } catch (NumberFormatException | SQLException | NamingException se) {

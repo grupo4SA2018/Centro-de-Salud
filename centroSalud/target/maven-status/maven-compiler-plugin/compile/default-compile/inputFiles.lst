@@ -1,10 +1,10 @@
-/home/cyno/Documents/Software Avanzado/Laboratorio/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/Diagnostico.java
-/home/cyno/Documents/Software Avanzado/Laboratorio/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/Paciente.java
-/home/cyno/Documents/Software Avanzado/Laboratorio/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/CentroSalud.java
-/home/cyno/Documents/Software Avanzado/Laboratorio/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/Doctor.java
-/home/cyno/Documents/Software Avanzado/Laboratorio/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/Receta.java
-/home/cyno/Documents/Software Avanzado/Laboratorio/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/Enfermedad.java
-/home/cyno/Documents/Software Avanzado/Laboratorio/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/Cita.java
-/home/cyno/Documents/Software Avanzado/Laboratorio/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/DetalleReceta.java
-/home/cyno/Documents/Software Avanzado/Laboratorio/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/TrasladoPaciente.java
-/home/cyno/Documents/Software Avanzado/Laboratorio/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/Medicamento.java
+/home/gerson/NetBeansProjects/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/Medicamento.java
+/home/gerson/NetBeansProjects/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/Receta.java
+/home/gerson/NetBeansProjects/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/Doctor.java
+/home/gerson/NetBeansProjects/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/TrasladoPaciente.java
+/home/gerson/NetBeansProjects/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/CentroSalud.java
+/home/gerson/NetBeansProjects/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/Diagnostico.java
+/home/gerson/NetBeansProjects/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/Paciente.java
+/home/gerson/NetBeansProjects/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/Enfermedad.java
+/home/gerson/NetBeansProjects/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/Cita.java
+/home/gerson/NetBeansProjects/Centro-de-Salud/centroSalud/src/main/java/ServiciosWeb/DetalleReceta.java
