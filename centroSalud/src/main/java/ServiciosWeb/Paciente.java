@@ -134,7 +134,7 @@ public class Paciente {
     }
 
     @WebMethod(operationName = "historial_Paciente")
-    public String historial_Paciente(@WebParam(name = "dpi") String dpi) throws SQLException {
+     public String historial_Paciente(@WebParam(name = "dpi") String dpi) throws SQLException {
 
         JSONObject jObject = new JSONObject(dpi);
         dpi = (String) jObject.get("dpi").toString();
@@ -177,7 +177,7 @@ public class Paciente {
                         String fecha = result.getString("Fecha");
                         String idCita = result.getString("idCita");
 
-                        hCita += "Cita_" + idCita + ":{"
+                        hCita += "\"Cita_" + idCita + "\":{"
                                 + "\"nombreDoctor\": \"" + nombreDoc + "\",\n"
                                 + "\"fecha\": \"" + fecha + "\",\n"
                                 + "\"diagnostico\":{\n";
@@ -207,13 +207,13 @@ public class Paciente {
                         String fecha = result3.getString("Fecha");
                         String destino = result3.getString("Destino");
                         String origen = result3.getString("Origen");
-                        hCita += "Traslado_" + cont + ":{\"Fecha\":\"" + fecha + "\",\n"
-                                + "\"Destino\":" + destino + " ,\n\"Origen\":" + origen + "},\n";
+                        hCita += ",\"Traslado_" + cont + "\":{\"Fecha\":\"" + fecha + "\",\n"
+                                + "\"Destino\":" + destino + " ,\n\"Origen\":" + origen + "}\n";
                         cont++;
                     }
                     if (hCita.length() > 2) {
                         hCita = hCita.substring(0, hCita.length() - 2);
-                        hCita += "\n";
+                        hCita += "}\n";
                     }
                     if (Paciente.length() > 3) {
                         return Paciente + hCita + "\n}"; // cierre
@@ -239,7 +239,7 @@ public class Paciente {
             } //end finally try
         }
     }
-
+    
     @WebMethod(operationName = "obtenerIdPaciente")
     public String obtenerIdPaciente(@WebParam(name = "dpi") String dpi) throws SQLException {
 
