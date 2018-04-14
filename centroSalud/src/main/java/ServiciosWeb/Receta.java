@@ -150,7 +150,7 @@ public class Receta {
         return "{\"error\"}";
     }
     
-    @WebMethod(operationName = "obtenerIdReceta")
+   @WebMethod(operationName = "obtenerIdReceta")
     public String obtenerIdReceta(@WebParam(name = "idPaciente") String idPaciente) throws SQLException {
         boolean result = false;
         String sql = "";
@@ -165,16 +165,21 @@ public class Receta {
            conn =  ds.getConnection();
            stmt = conn.createStatement();
            
-            sql = "select r.idReceta as id from Receta r inner join Cita c"
+            sql = "select r.idReceta as id, c.idCita as idd from Receta r inner join Cita c"
                     + " on c.idCita = r.Cita where c.Realizada = 0 and c.Paciente ="+idPaciente+";";
             
             rs = stmt.executeQuery(sql);
-            result=true;    
+            result=true;
+            json = "{\n";
+            
             if(rs != null){
                 while(rs.next()){
-                    json = rs.getString("id");
-                    return rs.getString("id");
+                    json += "\"receta\": \""+rs.getString("id")+"\",\n";
+                    json += "\"cita\": \""+rs.getString("idd")+"\"\n";
+                    json += "}";
+                    return json;
                 }
+                result =false;
             }else{
                 return "{\"error\"}";
             }            
