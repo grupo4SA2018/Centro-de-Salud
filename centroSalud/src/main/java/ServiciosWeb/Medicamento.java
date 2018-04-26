@@ -28,7 +28,8 @@ public class Medicamento {
      */
     
     @WebMethod(operationName = "registro_Medicamento")
-    public String registro_Medicamento(@WebParam(name = "nombre") String nombre) throws SQLException {
+    public String registro_Medicamento(@WebParam(name = "nombre") String nombre,
+        @WebParam(name = "codigo") String codigo) throws SQLException {
         String sql="";
         Connection conn = null;
         Statement stmt = null;
