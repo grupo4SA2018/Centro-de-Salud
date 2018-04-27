@@ -291,22 +291,23 @@ public class Paciente {
         boolean result = false;
         try {
             JSONObject jObject = new JSONObject(entrada);
-            String dpi = (String) jObject.get("dpi").toString();
-            String destino = (String) jObject.get("destino").toString();
-            String origen = "4";
+            String dpi = (String) jObject.get("Paciente").toString();
+            String destino = (String) jObject.get("Destino").toString();
+            String origen = (String) jObject.get("Origen").toString();
 
             InitialContext ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup("java:/CentroSaludDS");
             conn = ds.getConnection();
             stmt = conn.createStatement();
 
-            sql = "INSERT INTO Traslado_Paciente (Fecha,Destino,Origen,Paciente) VALUES (CURDATE()," + destino + ",4,'" + dpi + "')";
+            sql = "INSERT INTO Traslado_Paciente (Fecha,Destino,Origen,Paciente) VALUES (CURDATE()," + destino + ","+origen+",'" + dpi + "')";
             result = stmt.execute(sql);
             result = true;
 
         } catch (Exception se) {
             //Handle errors for JDBC
-            return "{\"estado\":\"error\"}";
+            return "{\"Exito\":\"0\",\n"
+                + "\"Error\":\"Algo sucedio mal\"}";
         } finally {
             //finally block used to close resources
             if (stmt != null) {
@@ -317,9 +318,11 @@ public class Paciente {
             } //end finally try
         };
         if (result) {
-            return "{\"estado\":\"exito\"}";
+            return "{\n\"Exito\":\"1\",\n"
+                    + "\"Error\":\"\"}";
         }
-        return "{\"estado\":\"error\"}";
+        return "{\"Exito\":\"0\",\n"
+                + "\"Error\":\"Algo sucedio mal\"}";
     }
 
 }
