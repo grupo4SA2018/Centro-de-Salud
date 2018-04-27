@@ -101,9 +101,12 @@ public class CentroSalud {
                     + "WITH ROLLUP;";
             ResultSet result = null;
             result = stmt.executeQuery(sql);
-            String salida = "{\n";
+            String salida = "{\n \"Exito\":1,\n"
+                    + "\"diagnostico\":[\n";
             if (result != null) {
+                int cont=0;
                 while (result.next()) {
+                    cont++;
                      String nombre = result.getString("Nombre");
                      String e5 = result.getString("0 - 5");
                      String e15 = result.getString("6 - 15");
@@ -113,20 +116,22 @@ public class CentroSalud {
                      String e61 = result.getString("61 - ...");
                      String Tot = result.getString("Total");
                      
-                     salida += "\""+nombre+"\":{\n"
-                             + "\"0 - 5\":"+e5 +",\n"
-                             + "\"6 - 15\":"+e15 +",\n"
-                             + "\"16 - 20\":"+e20 +",\n"
-                             + "\"21 - 45\":"+e45 +",\n"
-                             + "\"46 - 60\":"+e60 +",\n"
-                             + "\"61 - ...\":"+e61 +",\n"
-                             + "\"Total\":"+Tot+"\n},\n";
+                     salida += "{\n"
+                             + "\"Id\":\""+cont+"\",\n"
+                             + "\"Nombre\":\""+nombre+"\",\n"
+                             + "\"0-5\":\""+e5 +"\",\n"
+                             + "\"6-15\":\""+e15 +"\",\n"
+                             + "\"16-20\":\""+e20 +"\",\n"
+                             + "\"21-45\":\""+e45 +"\",\n"
+                             + "\"46-60\":\""+e60 +"\",\n"
+                             + "\">60\":\""+e61 +"\",\n"
+                             + "\"Total\":\""+Tot+"\"\n},\n";
                 }
             }
             
             if(salida.length()>5){
                 salida = salida.substring(0, salida.length() - 2);
-                salida = salida + "\n}";
+                salida = salida + "\n]\n}";
                 return salida;
             }
         } catch (NumberFormatException | SQLException | NamingException se) {

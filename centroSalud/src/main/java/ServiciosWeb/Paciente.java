@@ -134,10 +134,10 @@ public class Paciente {
     }
 
     @WebMethod(operationName = "historial_Paciente")
-     public String historial_Paciente(@WebParam(name = "dpi") String dpi) throws SQLException {
+    public String historial_Paciente(@WebParam(name = "dpi") String dpi) throws SQLException {
 
         JSONObject jObject = new JSONObject(dpi);
-        dpi = (String) jObject.get("dpi").toString();
+        dpi = (String) jObject.get("DPI").toString();
 
         String sql = "";
         Connection conn = null;
@@ -162,42 +162,61 @@ public class Paciente {
                 String Paciente = "";
                 String nombrePac = result0.getString("Nombre");
                 String genero = result0.getString("Genero");
-
-                Paciente = "{"
-                        + "\"nombrePaciente\": \"" + nombrePac + "\",\n"
-                        + "\"genero\": \"" + genero + "\",\n";
+                
+                Paciente = "{\n"
+                        + "\"Exito\":1\n"
+                        + "\"DPI\":\"" + dpi + "\",\n"
+                        + "\"Nombre\": \"" + nombrePac + "\",\n"
+                        + "\"Apellido\": \"" + nombrePac + "\",\n"
+                        + "\"Telefono\":\"\",\n"
+                        + "\"Direccion\":\"\",\n"
+                        + "\"Fecha_Nacimiento\":\"\",\n"
+                        + "\"Historial\":[\n";
 
                 sql = "select P.nombre as 'Nombre Paciente', P.Genero, D.nombre as 'Nombre Doctor', C.Fecha, C.idCita  from Paciente as P, Cita as C , Doctor as D where P.dpi = '" + dpi + "' and P.idPaciente = C.Paciente and C.Doctor = D.idDoctor;";
                 result = stmt.executeQuery(sql);
                 String hCita = "";
+                String nuevoCita = "";
                 if (result != null) {
+                    
                     while (result.next()) {
 
                         String nombreDoc = result.getString("Nombre Doctor");
                         String fecha = result.getString("Fecha");
                         String idCita = result.getString("idCita");
 
-                        hCita += "\"Cita_" + idCita + "\":{"
-                                + "\"nombreDoctor\": \"" + nombreDoc + "\",\n"
-                                + "\"fecha\": \"" + fecha + "\",\n"
-                                + "\"diagnostico\":{\n";
+                        nuevoCita += "{\n"
+                                + "\"Fecha\": \"" + fecha + "\",\n"
+                                + "\"Descripcion\": \"Esta enfermo \",\n"
+                                + "\"Diagnosticos\":[\n";
 
                         sql = "Select E.Nombre as 'Nombre Enfermedad' FROM Cita as C, Diagnostico as D, Enfermedad as E WHERE C.idCita = " + idCita + " and D.Cita = C.idCita and D.Enfermedad_idEnfermedad = E.idEnfermedad;";
                         ResultSet result2 = stmt2.executeQuery(sql);
+                        String nuevo="";
                         while (result2.next()) {
                             String nombreEnf = result2.getString("Nombre Enfermedad");
-                            hCita += "\"enfermedad\": \"" + nombreEnf + "\",\n";
+                            nuevo += "{\n"
+                                    + "\"Diagnostico\": \"" + nombreEnf + "\"\n"
+                                    + "},";
                         }
-                        if (hCita.length() > 2) {
-                            hCita = hCita.substring(0, hCita.length() - 2);
-                            hCita += "\n}\n"; //cierre enfermedades
-                            hCita += "\n},\n"; // cierre cita
+                        if (nuevo.length() > 2) {
+                            nuevo = nuevo.substring(0, nuevo.length() - 2);
+                            nuevo += "\n}\n"; //cierre enfermedades
+                            nuevo += "]\n";
+                            nuevo += "\n},\n"; // cierre cita
+                        } else {
+                            nuevo += "{ } ]\n},\n";
                         }
+                        nuevoCita += nuevo;
+                        hCita += nuevoCita;
                     }
+                    
                     if (hCita.length() > 2) {
                         hCita = hCita.substring(0, hCita.length() - 2);
-                        hCita += "\n";
+                        hCita += "],\n";
                     }
+
+                    hCita += "\"traslados\":[";
                     sql = "SELECT Fecha, Destino, Origen "
                             + "FROM Traslado_Paciente, Paciente\n"
                             + "WHERE Paciente.DPI = Traslado_Paciente.Paciente AND Traslado_Paciente.Paciente = '" + dpi + "';";
@@ -207,13 +226,17 @@ public class Paciente {
                         String fecha = result3.getString("Fecha");
                         String destino = result3.getString("Destino");
                         String origen = result3.getString("Origen");
-                        hCita += ",\"Traslado_" + cont + "\":{\"Fecha\":\"" + fecha + "\",\n"
-                                + "\"Destino\":" + destino + " ,\n\"Origen\":" + origen + "}\n";
+                        hCita += "\n{\n"
+                                + "\"origen\":" + origen + " ,\n"
+                                + "\"destino\":" + destino + ",\n"
+                                + "\"Fecha\":\"" + fecha + "\""
+                                + "\n},\n";
+
                         cont++;
                     }
                     if (hCita.length() > 2) {
                         hCita = hCita.substring(0, hCita.length() - 2);
-                        hCita += "}\n";
+                        hCita += "\n]\n";
                     }
                     if (Paciente.length() > 3) {
                         return Paciente + hCita + "\n}"; // cierre
@@ -239,7 +262,7 @@ public class Paciente {
             } //end finally try
         }
     }
-    
+
     @WebMethod(operationName = "obtenerIdPaciente")
     public String obtenerIdPaciente(@WebParam(name = "dpi") String dpi) throws SQLException {
 
@@ -280,8 +303,6 @@ public class Paciente {
         };
         return "{\"estado\":\"error\"}";
     }
-    
-    
 
     @WebMethod(operationName = "trasladoPaciente")
     public String trasladoPaciente(@WebParam(name = "entrada") String entrada) throws SQLException {
@@ -300,14 +321,14 @@ public class Paciente {
             conn = ds.getConnection();
             stmt = conn.createStatement();
 
-            sql = "INSERT INTO Traslado_Paciente (Fecha,Destino,Origen,Paciente) VALUES (CURDATE()," + destino + ","+origen+",'" + dpi + "')";
+            sql = "INSERT INTO Traslado_Paciente (Fecha,Destino,Origen,Paciente) VALUES (CURDATE()," + destino + "," + origen + ",'" + dpi + "')";
             result = stmt.execute(sql);
             result = true;
 
         } catch (Exception se) {
             //Handle errors for JDBC
             return "{\"Exito\":\"0\",\n"
-                + "\"Error\":\"Algo sucedio mal\"}";
+                    + "\"Error\":\"Algo sucedio mal\"}";
         } finally {
             //finally block used to close resources
             if (stmt != null) {
