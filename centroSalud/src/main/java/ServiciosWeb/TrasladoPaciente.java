@@ -14,6 +14,7 @@ import javax.jws.WebParam;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import org.json.JSONObject;
 
 
 /**
@@ -27,30 +28,31 @@ public class TrasladoPaciente {
      * registro de un traslado de paciente
      */
      @WebMethod(operationName = "registro_TrasladoPaciente")
-    public String registro_TrasladoPaciente(@WebParam(name = "fecha") String fecha, @WebParam(name = "idDestino") int destino, @WebParam(name = "idOrigen") int origen, @WebParam(name = "idPaciente") int paciente) throws SQLException {
-        String sql="";
+    public String registro_TrasladoPaciente(@WebParam(name = "entrada") String entrada) throws SQLException {
+        String sql = "";
         Connection conn = null;
         Statement stmt = null;
         boolean result = false;
-        
         try {
-           InitialContext ctx = new InitialContext();
-           DataSource ds = (DataSource)ctx.lookup("java:/CentroSaludDS");
-           conn =  ds.getConnection();
+            JSONObject jObject = new JSONObject(entrada);
+            String dpi = (String) jObject.get("Paciente").toString();
+            String destino = (String) jObject.get("Destino").toString();
+            String origen = (String) jObject.get("Origen").toString();
+
+            InitialContext ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup("java:/CentroSaludDS");
+            conn = ds.getConnection();
             stmt = conn.createStatement();
-            
-            sql = "insert into Traslado_Paciente ( fecha,destino,origen,paciente)"+
-                    " values ('"+fecha+"',"+destino+","+origen+","+paciente+")";
-            
+
+            sql = "INSERT INTO Traslado_Paciente (Fecha,Destino,Origen,Paciente) VALUES (CURDATE()," + destino + "," + origen + ",'" + dpi + "')";
             result = stmt.execute(sql);
-            result=true;
-            System.out.println(sql);
-            
-        } catch (NumberFormatException | SQLException | NamingException se) {
+            result = true;
+
+        } catch (Exception se) {
             //Handle errors for JDBC
-            result = false;
-        }
-        finally {
+            return "{\"Exito\":\"0\",\n"
+                    + "\"Error\":\"Algo sucedio mal\"}";
+        } finally {
             //finally block used to close resources
             if (stmt != null) {
                 conn.close();
@@ -59,10 +61,11 @@ public class TrasladoPaciente {
                 conn.close();
             } //end finally try
         };
-        
-        
-        if(result)
-            return "{\"estado:exito\"}";
-        return "{\"estado:error\"}";
+        if (result) {
+            return "{\n\"Exito\":\"1\",\n"
+                    + "\"Error\":\"\"}";
+        }
+        return "{\"Exito\":\"0\",\n"
+                + "\"Error\":\"Algo sucedio mal\"}";
     }
 }

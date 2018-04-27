@@ -241,17 +241,21 @@ public class Paciente {
                     if (Paciente.length() > 3) {
                         return Paciente + hCita + "\n}"; // cierre
                     } else {
-                        return "{\"estado\":\"error\"}";
+                        return "{\"Exito\":\"0\",\n"
+                + "\"Error\":\"Algo sucedio mal\"}";
                     }
                 } else {
-                    return "{\"estado\":\"error\"}";
+                    return "{\"Exito\":\"0\",\n"
+                + "\"Error\":\"Algo sucedio mal\"}";
                 }
             } else {
-                return "{\"estado\":\"error\"}";
+                return "{\"Exito\":\"0\",\n"
+                + "\"Error\":\"Algo sucedio mal\"}";
             }
         } catch (NumberFormatException | SQLException | NamingException se) {
             //Handle errors for JDBC
-            return "{\"estado\":\"error\"}";
+            return "{\"Exito\":\"0\",\n"
+                + "\"Error\":\"Algo sucedio mal\"}";
         } finally {
             //finally block used to close resources
             if (stmt != null) {

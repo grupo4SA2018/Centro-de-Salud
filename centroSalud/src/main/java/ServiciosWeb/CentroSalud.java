@@ -136,7 +136,8 @@ public class CentroSalud {
             }
         } catch (NumberFormatException | SQLException | NamingException se) {
             //Handle errors for JDBC
-            return "{\"estado:error\"}";
+            return "{\"Exito\":\"0\",\n"
+                + "\"Error\":\"Algo sucedio mal\"}";
         } finally {
             //finally block used to close resources
             if (stmt != null) {
@@ -147,7 +148,8 @@ public class CentroSalud {
             } //end finally try
         };
 
-        return "{\"estado:error\"}";
+        return "{\"Exito\":\"0\",\n"
+                + "\"Error\":\"Algo sucedio mal\"}";
     }
 
 }
