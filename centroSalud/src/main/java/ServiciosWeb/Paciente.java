@@ -164,7 +164,7 @@ public class Paciente {
                 String genero = result0.getString("Genero");
                 
                 Paciente = "{\n"
-                        + "\"Exito\":1\n"
+                        + "\"Exito\":1,\n"
                         + "\"DPI\":\"" + dpi + "\",\n"
                         + "\"Nombre\": \"" + nombrePac + "\",\n"
                         + "\"Apellido\": \"" + nombrePac + "\",\n"
